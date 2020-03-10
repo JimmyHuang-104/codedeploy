@@ -1,33 +1,38 @@
 branches:
   only: master
+
 env:
   global:
-  - S3_BUCKET_NAME=
-  - CODEDEPLOY_APPLICATION=
-  - CODEDEPLOY_GROUP=
-  - REGION=ap-northeast-1
-  - LOCAL_DIR=deploy
+    - S3_BUCKET_NAME=jimmy-learning-deploybucket-18rzezjc4xbnc
+    - CODEDEPLOY_APPLICATION=jimmy-Application
+    - CODEDEPLOY_GROUP=master
+    - REGION=ap-northeast-1
+    - LOCAL_DIR=deploy
+    - secure: Oz1Orf3Jl3xYZMZVWFA2R9TNbI57J3JfGX7F377Rj50FaygWkxASEo4vOkC8a2qBBNKxz++aVPlUKeEIjdYbbfnQagDxHCSLG43pYR/gov0AkrKwuRtTIGnpevLWLzMq4+c+rqN/2sMoTviW8hPgNBTJM9X2R7LBHDl304yibJ9MTvZ9QR/bN9Qvj6nqAe1x1l0XnEHkZzhzHoFig/zSGd/LSREYpG0zqz0Imc9KQpwNIpvSwAXH44YaVOgIHa3h5YmgvtczF3V8fkw2DgBbQOGD9vg82/9J+QIDder+4z4+a8KaHuCDDXlv/cgXM1J3GxHoTWYF7gweN8rdzfAnoj7iqTI8jdcAIDghoE+GKrW7+T/00GSxEf6l6wGYBVTRaeqyYvr+Td8DRreup86S35kXo7tGLda5+2QlgouEuAgY/JPOoiZ4c4Wlmqy5Xq6aCTD3LjFn4M0wxjLnChwQbEL/xlk4YOZVUmxUFSimZrcTFPWI/sSTjTJ6v27rOn6t0yODvFQKtzohGRj/+jsaVrqojTPf9qhmrE768EvVCRQglAMDoorhzm2rC7WKE1klRoXR7Pl1hTqZ0QqNHIHk2bWAPwIs7SEhRqhcbbytAI0eUfNwZ+lhvNdDTlYoOfUHvo64y7aypOIZvmCVYJNbHjs4bqkok37wd7qyeXmkbqY=
+    - secure: UYcCDg/ABTM9PT8KIi3R8bpV2jiZQyRlrIs3Ajqxo1jRqtU1ML0lrBG4fwtwy8YNnqV8/6NA/Dns+qJ/ZsqUZtvhDzmbbAhR4IgZ7SNqYX8qtU+v1YRsUivJxVVPlMezxXpSjEVGpHIwcABtE1KzgtMmjB+vBIwddFklBrAjJmgrynvDfzEuourXQcfMrFQ/s3hr+6lX8rnsl0pSWcxay+fBQcoZ44fgWOmntCiwaigFzs/njkX8+/XaQrR8w4nuGcuxELkk3YeugkMJnH/cHg5QySTQ3RLTdFngGac3n/MSfrmlf8UHlfWvUaAddqyjgbfHQ58jusbKMh+SVL6swnpqoCQ3A8dyuv9KmpJ7WoFHJWmasdAe44BZO8c3c65GdVzLjOU0Zq1BWSGPUyomdw9yLIG9Au38K1SyIdGZ03JnmI+ko8ZJpxb+UwKer03h1NMjDMS48t+hmNZhz/0i2YwsOhop8v5WODzJMFD0fk7vvhCHuxtlfwPYFCkTv1pRZc8EFc4Z/UBrr+TA+pdA9KwcfXQ70lc3Fqkdz7foNR6DeWjatuEf6ZL0MWT3HPSyDxlNCy+KB4d/YkUOKfLHrm5d9ommiZQswy4KuhjCIFKTJkltFnVBFUA+ySRDo5/l5Yo+miUHfcC9efUUFEyvdPO49d79yk4evpZ8n41FP7Y=
+
 script:
-- zip release index.html scripts/* appspec.yml
-- mkdir ${LOCAL_DIR}
-- mv release.zip ${LOCAL_DIR}/
+  - zip release index.html scripts/* appspec.yml
+  - mkdir ${LOCAL_DIR}
+  - mv release.zip ${LOCAL_DIR}/
+
 deploy:
-- provider: s3
-  bucket: "${S3_BUCKET_NAME}"
-  access_key_id: "$AWS_ACCESS_KEY_ID"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY"
-  local_dir: "${LOCAL_DIR}"
-  skip_cleanup: true
-  region: "${REGION}"
-  on:
-    branch: master
-- provider: codedeploy
-  bucket: "${S3_BUCKET_NAME}"
-  access_key_id: "$AWS_ACCESS_KEY_ID"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY"
-  key: release.zip
-  application: "${CODEDEPLOY_APPLICATION}"
-  deployment_group: "${CODEDEPLOY_GROUP}"
-  region: "${REGION}"
-  on:
-    branch: master
+  - provider: s3
+    bucket: '${S3_BUCKET_NAME}'
+    access_key_id: '$AWS_ACCESS_KEY_ID'
+    secret_access_key: '$AWS_SECRET_ACCESS_KEY'
+    local_dir: '${LOCAL_DIR}'
+    skip_cleanup: true
+    region: '${REGION}'
+    on:
+      branch: master
+  - provider: codedeploy
+    bucket: '${S3_BUCKET_NAME}'
+    access_key_id: '$AWS_ACCESS_KEY_ID'
+    secret_access_key: '$AWS_SECRET_ACCESS_KEY'
+    key: release.zip
+    application: '${CODEDEPLOY_APPLICATION}'
+    deployment_group: '${CODEDEPLOY_GROUP}'
+    region: '${REGION}'
+    on:
+      branch: master
