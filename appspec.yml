@@ -1,57 +1,19 @@
 version: 0.0
 os: linux
 files:
-- source: src
-  destination: /var/www/html
-
-# permissions:
-#   - object: /opt/tomcat/bin
-#     pattern: "*.sh"
-#     owner: root
-#     group: root
-#     mode: 755
-#     type:
-#       - file
-
+  - source: /index.html
+    destination: /var/www/html/
 hooks:
-  ApplicationStop:
-  - location: script/suspend-scaling.sh
-    timeout: 60
-    runas: root
-
-#  - location: script/deregister-elb.sh
-#    timeout: 300
-#    runas: root
-
-  - location: script/stop-service.sh
-    timeout: 180
-    runas: root
-
   BeforeInstall:
-  # - location: script/install_dependencies
-  #   timeout: 300
-  #   runas: root
+    - location: scripts/install_dependencies
+      timeout: 300
+      runas: root
+    - location: scripts/start_server
+      timeout: 300
+      runas: root
+    - location: scripts/clean
+  ApplicationStop:
+    - location: scripts/stop_server
+      timeout: 300
+      runas: root
 
-  - location: script/earse-application.sh
-    timeout: 120
-    runas: root
-
-  # AfterInstall:
-
-  ApplicationStart:
-  - location: script/start-service.sh
-    timeout: 300
-    runas: root
-
-  ValidateService:
-  - location: script/verify-service.sh
-    timeout: 60
-    runas: root
-
-#  - location: script/register-elb.sh
-#    timeout: 300
-#    runas: root
-
-  - location: script/resume-scaling.sh
-    timeout: 60
-    runas: root
