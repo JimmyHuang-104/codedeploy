@@ -1,3 +1,4 @@
 {
-  "Owner": "jimmy"
+  "Owner": "jimmy",
+  "InstanceType": "t3.micro"
 }

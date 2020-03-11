@@ -11,7 +11,10 @@ Parameters:
     Default: 4
   InstanceType:
     Type: String
-    Default: t3.nano
+    Default: t2.micro
+  ImageId:
+    Type: AWS::EC2::Image::Id
+    Default: ami-05aa221654b8e4eb8
 
 Resources:
   ##############################
@@ -248,29 +251,10 @@ Resources:
       LaunchTemplateData:
         IamInstanceProfile:
           Name: !Ref InstanceProfile
-        ImageId: ami-0af1df87db7b650f4
+        ImageId: !Ref ImageId
         InstanceType: !Ref InstanceType
         SecurityGroupIds:
           - !Ref InstanceSG
-        UserData:
-          Fn::Base64: !Sub |
-            #!/bin/bash
-            # get admin privileges
-            sudo su
-            # Installing CodeDeploy Agent
-            yum update -y
-            yum install -y ruby
-            # install httpd (Linux 2 version)
-            yum install -y httpd.x86_64
-            systemctl start httpd.service
-            systemctl enable httpd.service
-            echo "Hello World from $(hostname -f)" > /var/www/html/index.html
-            # Download the agent (replace the region)
-            cd ~
-            wget https://aws-codedeploy-${AWS::Region}.s3.${AWS::Region}.amazonaws.com/latest/install
-            chmod +x ./installc
-            ./install auto
-            service codedeploy-agent status
 
   ##############################
   #  Application LoadBalancer
@@ -452,3 +436,18 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+
+  DynamoDBPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${Owner}-DynamoDBPolicy
+      Roles:
+        - !Ref InstanceRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:*'
+            Resource:
+              - !Sub ${DynamoDB.Arn}
